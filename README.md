@@ -2,13 +2,13 @@
 
 Band management game for Android and iOS set in the Early Years of Man. Small bands rove across the face of a younger Earth
 facing ferocious beasts, rival bands, the elements, and even internal disputes. Strive to fashion tools, raise children, write
-your people's holy book, honor your ancestors, and develop your branch of the species.
+your people's holy book, honor your ancestors, and survive to continue on your branch of the species.
 
 # Game Modes
 
 ## Combat Mode
 * turn based, sort of like Final Fantasy or Golden Sun
-* characters learn different moves by creating and equipping tools and gaining combat experience
+* characters learn different moves by equipping weapons and gaining combat experience
 * combat mode is invoked when bands attack or are attacked, creatures attack or are attacked (hunting)
 
 Moves
@@ -23,7 +23,7 @@ a Lance.
 
 ## Map Mode
 
-A large component of the game is built around migration and following the heards of animals. Bands must always be on the move
+A large component of the game is built around migration and following the herds of animals. Bands must always be on the move
 if they wish to eat meat, and the map mode is how you track your location on Earth. As your technology improves you may start
 to orient yourself better on the map and be able to find pervious encampments or sources of water.
 
@@ -33,7 +33,23 @@ water sources or other bands represented as icons on the map. It's from the map 
 engage in a hunt.
 
 Map mode may also allow you to set your band stance: defensive, migratory, sneak attack. These stances affect what initiative
-levels you will have entering into combat mode and may also provide other benefits or liablities.
+levels you will have entering into combat mode and may also provide other benefits or liablities. Possibly your line of sight
+and range of visible terrain is influcenced by what stance you are in, and what level of wisdom your vangaurd has.
+
+The map is directly overhead, you tap on the screen to set a new destination. While the band is moving you may open stat menus
+as overlays because movement is not immediate.
+
+TODO:
+
+1. Should there be waypoints we move between, like FFT? With options to engage or be engaged by neighboring bands. This does
+make it neater.
+
+2. What kind of gates are there to stop you from visiting every waypoint? Well.. possibly having enough water and food to make
+it between certain nodes.. You might need to discover meat salting before you can take long journeys, and you might need
+to have a larger band to cross certain deserts. Or maybe domesticated animals.
+
+3. 
+
 
 ## Camp Mode
 
@@ -45,8 +61,8 @@ Families may start in Camp Mode. Fights may also break out. In your character li
 might be the warrior group, or the elders, or family units. Bonds between these characters will be stronger, meaning that
 they will have improved morale when they are together. Families can't really be assigned, they form on their own. However as
 the player you fill the role of the tribal elders, so you can bless some actions and condemn others. For example you can bless
-a man and woman coming together and having a child, you can condemn a large male bullying other characters. These blessings and
-condemnations influence the culture of your group.
+a man and woman coming together and having a child, you can condemn a large male bullying other characters. These blessings 
+and condemnations influence the culture of your group.
 
 In camp mode you also set the marching order when migrating. This is important because you may be attacked from behind, or
 even from the air randomly. So good plicy to distribute your warriors in the group.
@@ -56,9 +72,9 @@ and children who stay behind are now more vulnerable.
 
 # Actions the Player Can Take (And How These May Trigger Game Events)
 
-The player decides who eats what. (Though you may be alerted that a character stole from the food store - or you may not)
+The player decides who eats what.
 
-The player distributes clothes and tools. (This may cause jealously and estrangement from the elder leadership)
+The player distributes clothes and tools.
 
 The player issues commands in combat mode. (A character may flee or lose their nerve and act out)
 
@@ -129,21 +145,20 @@ Technologies to discover: Fire, Wheel, Atlatale, Bow, Obsedian Blades, Bronze Wo
 Crafting takes time and requires ingredients from the natural world. Natural materials may be harvested passively if you set
 a quota on what you want to collect?
 
-# Early Game Story
+# Early Player Stories
 
 You start out as a young man, possibly just banished from another group. You have a spear, and hide garment, and that's all.
 
-The first thing you'll need to do is hunt for some food. You find a deerodon ahead of you in map mode. You engage sneak
-formation and get close to the deer, close enough to enter combat mode. You get a surprise attack in and kill the deer.
-Battles are usually not very long in combat mode. A strike is often fatal, or at least incapacitating, so initiative is
-very important.
+The first thing you'll need to do is hunt for some food. You find a deerodon on a node ahead of you in map mode. 
+You engage sneak formation and get close to the deer, close enough to enter combat mode. You get a surprise attack in and 
+kill the deer. Battles are usually not very long in combat mode. A strike is often fatal, or at least incapacitating, so 
+initiative is very important.
 
 You get lots of meat and a hide from the deer. You enter into camp mode. You don't yet have fire technology, so you knosh
 on the raw meat until you can't eat anymore. You then begin crafting the deer hide into an extra garment.
 
 You enter into map mode and look around. Ahead you see another small band, just an old man and a young woman. Excellent. You
-want the young woman, and the old man should be no trouble. You again enter into sneak mode and get up close to the other 
-band. They are in camp mode, and didn't set a guard. Almost too easy. You attack, and enter into combat mode.
+want the young woman, and the old man should be no trouble. You attack, and enter into combat mode.
 
 The old man is in front of the woman, who is also in combat mode. You have the initiative. You use "Strike". The old man is 
 down, but not dead. The young woman then goes, she has a spear and she stabs you in the side. Very painful. Damn. Your turn 
@@ -155,7 +170,7 @@ Now you are back in map mode, and presented with the review screen. In the loot 
 into your group, and of course you want the spear. You're not sure what to do with the old man. You could use him to carry 
 things, or as bait for a wild animal, he doesn't need to eat much.. but his culture influence is strong, and if he stays 
 around the woman will be slower to gain your culture. So you can either execute him, or just leave him alone in the wild. You 
-are feeling generous so you just leave him alone in the wild unconcious. He'll probably be dead by nightfall anyway.
+leave him alone in the wild unconcious. He'll probably be dead by nightfall anyway.
 
 The woman is still unconcious so you add her to your burden, and move on. You notice your strength level is modified
 temporarily by your wound. You also see you gained some combat experience, boosting your Agility.

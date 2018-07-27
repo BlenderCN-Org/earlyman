@@ -12,6 +12,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include "mesh.cpp"
 #include "shader.cpp"
 
 #define SCREEN_WIDTH 640
@@ -41,73 +42,36 @@ const uint32_t uvAttributeIndex = 1;
 GLuint TextureID;
 GLuint programID;
 
-glm::mat4 model;
 glm::mat4 view;
 glm::mat4 projection;
 glm::quat camera;
 
-GLuint vbo[2], vao[1];
+Mesh mesh(0.0f);
+Mesh mesh_two(20.0f);
 
 void GLInit ()
 {
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders( "shaders/simple.vert", "shaders/simple.frag" );
 
-	glGenBuffers(2, vbo);
-	glGenVertexArrays(1, vao);
-	glBindVertexArray(vao[0]); 
- 
-	GLfloat vertex_buffer_data[] = { 
-    -1.0f, -1.0f, 0.0f,
-     1.0f, -1.0f, 0.0f,
-     1.0f,  1.0f, 0.0f,
-     1.0f,  1.0f, 0.0f,
-    -1.0f, -1.0f, 0.0f,
-    -1.0f,  1.0f, 0.0f
-  };
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
-  glVertexAttribPointer (positionAttributeIndex, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(positionAttributeIndex);
- 
-  GLfloat uv_buffer_data[] = {
-    0.0f, 0.0f,
-    1.0f, 0.0f,
-    1.0f, 1.0f,
-    0.0f, 0.0f,
-    1.0f, 1.0f,
-    0.0f, 1.0f
-  };
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer_data), uv_buffer_data, GL_STATIC_DRAW);
-  glVertexAttribPointer (uvAttributeIndex, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-  glEnableVertexAttribArray(uvAttributeIndex);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	float aspect_ratio = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
   projection = glm::perspective (glm::radians (90.0f), aspect_ratio, 0.0f, 100.0f);
 
-  model = glm::mat4(1.0f);
-   
-  SDL_Surface* Surface = SDL_LoadBMP ("assets/red.bmp");
+  SDL_Surface* Surface = SDL_LoadBMP ("assets/blue.bmp");
    
   glGenTextures(1, &TextureID);
   glBindTexture(GL_TEXTURE_2D, TextureID);
-   
-  int Mode = GL_RGB;
-   
-  if(Surface->format->BytesPerPixel == 4) {
-      Mode = GL_RGBA;
-  }
-   
-  glTexImage2D(GL_TEXTURE_2D, 0, Mode, Surface->w, Surface->h, 0, Mode,
+  
+  // NOTE: this crazy GL_BGR thing for the format param, I guess windows bitmaps flip blue and red?
+  // if I just use GL_RGB for format, red and blue channels are reversed
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Surface->w, Surface->h, 0, GL_BGR,
       GL_UNSIGNED_BYTE, Surface->pixels);
    
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  mesh . init ();
+  mesh_two . init ();
 }
 
 void Render (SDL_Window* window)
@@ -116,25 +80,18 @@ void Render (SDL_Window* window)
   glm::mat4 rotation_matrix = glm::toMat4 (camera);
   view = view * rotation_matrix;
 
-  model = glm::mat4 ();
-  model = glm::translate (model, glm::vec3 (0.0f, 0.0f, -20.0f));
-  model = glm::scale (model, glm::vec3 (10.0f, 10.0f, 0.0f));
-
   glClearColor (0.5, 0.5, 0.5, 1.0);
   glClear (GL_COLOR_BUFFER_BIT);
 
   glUseProgram (programID);
 
-  glUniformMatrix4fv (glGetUniformLocation (programID, "u_model"),
-      1, GL_FALSE, glm::value_ptr (model));
   glUniformMatrix4fv (glGetUniformLocation (programID, "u_view"),
       1, GL_FALSE, glm::value_ptr (view));
   glUniformMatrix4fv (glGetUniformLocation (programID, "u_projection"),
       1, GL_FALSE, glm::value_ptr (projection));
-  
-	glBindVertexArray (vao[0]); 
 
-  glDrawArrays (GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
+  mesh . draw (programID);  
+  mesh_two . draw (programID);  
 
   // Swap our buffers to make our changes visible
   SDL_GL_SwapWindow (window);
@@ -144,7 +101,6 @@ int main(int argc, char* args[])
 {
   SDL_Window* window = NULL;
   SDL_GLContext mainContext = NULL;
-  SDL_Surface* redBlock = NULL;
 
   if (SDL_Init (SDL_INIT_VIDEO) < 0)
   {
@@ -171,7 +127,6 @@ int main(int argc, char* args[])
   GLInit ();
 
   bool quit = false;
-  bool red_dead = false;
 
   SDL_Event e;
 

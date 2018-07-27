@@ -34,19 +34,19 @@ bool loadAssets (BMP_DICT* dict)
 
 bool SetOpenGLAttributes ()
 {
-	// Set our OpenGL version.
-	// SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  // Set our OpenGL version.
+  // SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-	// 3.2 is part of the modern versions of OpenGL, but most video cards whould be able to run it
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+  // 3.2 is part of the modern versions of OpenGL, but most video cards whould be able to run it
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
-	// Turn on double buffering with a 24bit Z buffer.
-	// You may need to change this to 16 or 32 for your system
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  // Turn on double buffering with a 24bit Z buffer.
+  // You may need to change this to 16 or 32 for your system
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	return true;
+  return true;
 }
 
 GLuint programID;
@@ -80,14 +80,14 @@ void GLInit ()
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
   // 90 degrees
-	projection = glm::perspective(
-		glm::radians(90.0f),
-		static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT),
-		0.0f,
-		100.0f
-	);
+  projection = glm::perspective(
+    glm::radians(90.0f),
+    static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT),
+    0.0f,
+    100.0f
+  );
 
- 	model = glm::mat4(1.0f);
+  model = glm::mat4(1.0f);
 }
 
 void Render (SDL_Window* window)
@@ -96,45 +96,45 @@ void Render (SDL_Window* window)
   glm::mat4 rotation_matrix = glm::toMat4(camera);
   view = view * rotation_matrix;
 
-	glClearColor(0.5, 0.5, 0.5, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+  glClearColor(0.5, 0.5, 0.5, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-	// Use our shader
-	glUseProgram(programID);
+  // Use our shader
+  glUseProgram(programID);
 
-	// 1rst attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+  // 1rst attribute buffer : vertices
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ),
+  glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ),
       1, GL_FALSE, glm::value_ptr( model ) );
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_view" ),
+  glUniformMatrix4fv( glGetUniformLocation( programID, "u_view" ),
       1, GL_FALSE, glm::value_ptr( view ) );
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_projection" ),
+  glUniformMatrix4fv( glGetUniformLocation( programID, "u_projection" ),
       1, GL_FALSE, glm::value_ptr( projection ) );
-	
-	model = glm::mat4();
-	model = glm::translate( model, glm::vec3( 0.0f, 0.0f, -20.0f ));
-	model = glm::scale( model, glm::vec3( 10.0f, 10.0f, 0.0f ));
-	
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
-	
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
+  
+  model = glm::mat4();
+  model = glm::translate( model, glm::vec3( 0.0f, 0.0f, -20.0f ));
+  model = glm::scale( model, glm::vec3( 10.0f, 10.0f, 0.0f ));
+  
+  glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
+  
+  glVertexAttribPointer(
+    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+    3,                  // size
+    GL_FLOAT,           // type
+    GL_FALSE,           // normalized?
+    0,                  // stride
+    (void*)0            // array buffer offset
+  );
 
-	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
+  // Draw the triangle !
+  glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
 
-	glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(0);
 
-	// Swap our buffers to make our changes visible
-	SDL_GL_SwapWindow(window);
+  // Swap our buffers to make our changes visible
+  SDL_GL_SwapWindow(window);
 }
 
 int main(int argc, char* args[])
@@ -159,7 +159,7 @@ int main(int argc, char* args[])
     return 1;
   }
 
-	SetOpenGLAttributes (); 
+  SetOpenGLAttributes (); 
   mainContext = SDL_GL_CreateContext (window);
 
   SDL_GL_SetSwapInterval (1);
@@ -167,7 +167,7 @@ int main(int argc, char* args[])
   glewExperimental = GL_TRUE; 
   glewInit();
 
-	GLInit ();
+  GLInit ();
 
   /*
   BMP_DICT image_dict;

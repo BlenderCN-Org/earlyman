@@ -49,6 +49,10 @@ bool SetOpenGLAttributes ()
   return true;
 }
 
+const uint32_t positionAttributeIndex = 0;
+const uint32_t uvAttributeIndex = 1;
+
+GLuint VertexArrayID;
 GLuint TextureID;
 GLuint programID;
 GLuint vertexbuffer;
@@ -62,9 +66,10 @@ glm::quat camera;
 
 void GLInit ()
 {
-  GLuint VertexArrayID;
   glGenVertexArrays(1, &VertexArrayID);
   glBindVertexArray(VertexArrayID);
+
+  std::cout << "VertexArrayID: " << VertexArrayID << std::endl;
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders( "shaders/simple.vert", "shaders/simple.frag" );
@@ -81,7 +86,9 @@ void GLInit ()
   glGenBuffers(1, &vertexbuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-  
+ 
+  std::cout << "vertexbuffer: " << vertexbuffer << std::endl;
+
   static const GLfloat uv_buffer_data[] = { 
     0.0f, 0.0f,
     1.0f, 0.0f,
@@ -94,6 +101,8 @@ void GLInit ()
   glGenBuffers(1, &uvbuffer);
   glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer_data), uv_buffer_data, GL_STATIC_DRAW);
+  
+  std::cout << "uvbuffer: " << uvbuffer << std::endl;
 
   // 90 degrees
   projection = glm::perspective(
@@ -131,52 +140,32 @@ void Render (SDL_Window* window)
   glm::mat4 rotation_matrix = glm::toMat4(camera);
   view = view * rotation_matrix;
 
-  glClearColor(0.5, 0.5, 0.5, 1.0);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // Use our shader
-  glUseProgram(programID);
-
-  // 1rst attribute buffer : vertices
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-
-  glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ),
-      1, GL_FALSE, glm::value_ptr( model ) );
-  glUniformMatrix4fv( glGetUniformLocation( programID, "u_view" ),
-      1, GL_FALSE, glm::value_ptr( view ) );
-  glUniformMatrix4fv( glGetUniformLocation( programID, "u_projection" ),
-      1, GL_FALSE, glm::value_ptr( projection ) );
-  
   model = glm::mat4();
   model = glm::translate( model, glm::vec3( 0.0f, 0.0f, -20.0f ));
   model = glm::scale( model, glm::vec3( 10.0f, 10.0f, 0.0f ));
-  
-  glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
-  
-  glVertexAttribPointer(
-    0,          // attribute 0. No particular reason for 0, but must match the layout in the shader.
-    3,          // size
-    GL_FLOAT,   // type
-    GL_FALSE,   // normalized?
-    0,          // stride
-    (void*)0    // array buffer offset
-  );
 
-  glVertexAttribPointer(
-    1,          // attribute 0. No particular reason for 0, but must match the layout in the shader.
-    2,          // size
-    GL_FLOAT,   // type
-    GL_FALSE,   // normalized?
-    0,          // stride
-    (void*)0    // array buffer offset
-  );
+  glClearColor (0.5, 0.5, 0.5, 1.0);
+  glClear (GL_COLOR_BUFFER_BIT);
 
-  // Draw the triangle !
+  glUseProgram (programID);
+
+  glBindBuffer (GL_ARRAY_BUFFER, VertexArrayID);
+
+  glUniformMatrix4fv (glGetUniformLocation (programID, "u_model"),
+      1, GL_FALSE, glm::value_ptr (model));
+  glUniformMatrix4fv (glGetUniformLocation (programID, "u_view"),
+      1, GL_FALSE, glm::value_ptr (view));
+  glUniformMatrix4fv (glGetUniformLocation (programID, "u_projection"),
+      1, GL_FALSE, glm::value_ptr (projection));
+  
+  glVertexAttribPointer (positionAttributeIndex, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glVertexAttribPointer (uvAttributeIndex, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  
+  glEnableVertexAttribArray(positionAttributeIndex);
+
   glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
 
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(positionAttributeIndex);
 
   // Swap our buffers to make our changes visible
   SDL_GL_SwapWindow(window);

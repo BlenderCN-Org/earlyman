@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "shader.cpp"
 
@@ -52,6 +54,8 @@ GLuint vertexbuffer;
 glm::mat4 model;
 glm::mat4 view;
 glm::mat4 projection;
+glm::quat camera;
+
 
 void GLInit ()
 {
@@ -75,11 +79,10 @@ void GLInit ()
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	projection = glm::ortho(
-		0.0f,
-		static_cast<float>(SCREEN_WIDTH),
-		static_cast<float>(SCREEN_HEIGHT),
-		0.0f,
+  // 90 degrees
+	projection = glm::perspective(
+		glm::radians(90.0f),
+		static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT),
 		0.0f,
 		100.0f
 	);
@@ -89,6 +92,10 @@ void GLInit ()
 
 void Render (SDL_Window* window)
 {
+  // apply camera rotation to view matrix
+  glm::mat4 rotation_matrix = glm::toMat4(camera);
+  view = view * rotation_matrix;
+
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -99,13 +106,16 @@ void Render (SDL_Window* window)
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_view" ), 1, GL_FALSE, glm::value_ptr( view ) );
-	glUniformMatrix4fv( glGetUniformLocation( programID, "u_projection" ), 1, GL_FALSE, glm::value_ptr( projection ) );
+	glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ),
+      1, GL_FALSE, glm::value_ptr( model ) );
+	glUniformMatrix4fv( glGetUniformLocation( programID, "u_view" ),
+      1, GL_FALSE, glm::value_ptr( view ) );
+	glUniformMatrix4fv( glGetUniformLocation( programID, "u_projection" ),
+      1, GL_FALSE, glm::value_ptr( projection ) );
 	
 	model = glm::mat4();
-	model = glm::translate( model, glm::vec3( 0.0f, 0.0f, 0.0f ));
-	model = glm::scale( model, glm::vec3( 10.0f, 20.0f, 0.0f ));
+	model = glm::translate( model, glm::vec3( 0.0f, 0.0f, -20.0f ));
+	model = glm::scale( model, glm::vec3( 10.0f, 10.0f, 0.0f ));
 	
 	glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
 	
@@ -123,23 +133,8 @@ void Render (SDL_Window* window)
 
 	glDisableVertexAttribArray(0);
 
-	//glClearColor(0.5, 0.5, 0.5, 1.0);
-	//glClear(GL_COLOR_BUFFER_BIT);
-
 	// Swap our buffers to make our changes visible
 	SDL_GL_SwapWindow(window);
-
-  /*
-	std::cout << "Press ENTER to render next frame\n";
-	std::cin.ignore();
-  */
-
-	// Make our background black
-	//glClearColor(0.0, 0.0, 0.0, 0.0);
-	//glClear(GL_COLOR_BUFFER_BIT);
-
-	// Swap our buffers to make our changes visible
-	//SDL_GL_SwapWindow(window);
 }
 
 int main(int argc, char* args[])
@@ -206,6 +201,28 @@ int main(int argc, char* args[])
           if(e.key.keysym.sym == SDLK_ESCAPE)
           {
             quit = true;
+          }
+          else if(e.key.keysym.sym == SDLK_UP)
+          {
+            // this path defines using a vec3 as a constructor:
+            // /usr/local/Cellar/glm/0.9.8.5/include/glm/gtc/quaternion.hpp
+            glm::quat inc = glm::quat (glm::vec3 (0.01f, 0.0f, 0.0f));
+            camera *= inc;
+          }
+          else if(e.key.keysym.sym == SDLK_DOWN)
+          {
+            glm::quat inc = glm::quat (glm::vec3 (-0.01f, 0.0f, 0.0f));
+            camera *= inc;
+          }
+          else if(e.key.keysym.sym == SDLK_LEFT)
+          {
+            glm::quat inc = glm::quat (glm::vec3 (0.0f, -0.01f, 0.0f));
+            camera *= inc;
+          }
+          else if(e.key.keysym.sym == SDLK_RIGHT)
+          {
+            glm::quat inc = glm::quat (glm::vec3 (0.0f, 0.01f, 0.0f));
+            camera *= inc;
           }
       }
     }

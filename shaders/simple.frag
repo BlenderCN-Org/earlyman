@@ -2,8 +2,12 @@
 
 precision highp float;
 
+uniform sampler2D u_sampler;
+
+in vec2 _uv;
+
 out vec3 color;
 
 void main(void) {
-  color = vec3(1., 1., 0.);
+  color = texture(u_sampler, _uv).xyz;
 }

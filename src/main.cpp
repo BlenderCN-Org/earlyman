@@ -49,8 +49,11 @@ bool SetOpenGLAttributes ()
   return true;
 }
 
+GLuint TextureID;
 GLuint programID;
 GLuint vertexbuffer;
+GLuint uvbuffer;
+
 glm::mat4 model;
 glm::mat4 view;
 glm::mat4 projection;
@@ -78,6 +81,19 @@ void GLInit ()
   glGenBuffers(1, &vertexbuffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+  
+  static const GLfloat uv_buffer_data[] = { 
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f
+  };
+
+  glGenBuffers(1, &uvbuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer_data), uv_buffer_data, GL_STATIC_DRAW);
 
   // 90 degrees
   projection = glm::perspective(
@@ -88,6 +104,25 @@ void GLInit ()
   );
 
   model = glm::mat4(1.0f);
+   
+  // You should probably use CSurface::OnLoad ... ;)
+  //-- and make sure the Surface pointer is good!
+  SDL_Surface* Surface = SDL_LoadBMP ("assets/red.bmp");
+   
+  glGenTextures(1, &TextureID);
+  glBindTexture(GL_TEXTURE_2D, TextureID);
+   
+  int Mode = GL_RGB;
+   
+  if(Surface->format->BytesPerPixel == 4) {
+      Mode = GL_RGBA;
+  }
+   
+  glTexImage2D(GL_TEXTURE_2D, 0, Mode, Surface->w, Surface->h, 0, Mode,
+      GL_UNSIGNED_BYTE, Surface->pixels);
+   
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Render (SDL_Window* window)
@@ -120,18 +155,28 @@ void Render (SDL_Window* window)
   glUniformMatrix4fv( glGetUniformLocation( programID, "u_model" ), 1, GL_FALSE, glm::value_ptr( model ) );
   
   glVertexAttribPointer(
-    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-    3,                  // size
-    GL_FLOAT,           // type
-    GL_FALSE,           // normalized?
-    0,                  // stride
-    (void*)0            // array buffer offset
+    0,          // attribute 0. No particular reason for 0, but must match the layout in the shader.
+    3,          // size
+    GL_FLOAT,   // type
+    GL_FALSE,   // normalized?
+    0,          // stride
+    (void*)0    // array buffer offset
+  );
+
+  glVertexAttribPointer(
+    1,          // attribute 0. No particular reason for 0, but must match the layout in the shader.
+    2,          // size
+    GL_FLOAT,   // type
+    GL_FALSE,   // normalized?
+    0,          // stride
+    (void*)0    // array buffer offset
   );
 
   // Draw the triangle !
   glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
 
   glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
 
   // Swap our buffers to make our changes visible
   SDL_GL_SwapWindow(window);

@@ -1,8 +1,9 @@
 # Codename: earlyman
 
-Band management game for Android and iOS set in the Early Years of Man. Small bands rove across the face of a younger Earth
-facing ferocious beasts, rival bands, the elements, and even internal disputes. Strive to fashion tools, raise children, write
-your people's holy book, honor your ancestors, and survive to continue on your branch of the species.
+Band management game for web, desktop, Android, and iOS set in the Early Years of Man. Small bands rove across the face of a 
+younger Earth hunting ferocious beasts, warring with rival bands, surviving the elements, sickness, and internal disputes. 
+Strive to fashion tools, raise  children, write your people's holy book, honor your ancestors, and survive to continue on your 
+branch of the species.
 
 # Game Modes
 

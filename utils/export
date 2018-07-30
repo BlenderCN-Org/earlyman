@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BLENDER=/Applications/Blender/blender.app/Contents/MacOS/blender
+
+INPUT_FILE=source_assets/${1}.blend
+OUTPUT_FILE=models/${1}_m.json
+
+RUN_SCRIPT=utils/run.py
+EXPORT_SCRIPT=utils/io_export_earlyman.py
+
+${BLENDER} ${INPUT_FILE} --background --python ${RUN_SCRIPT} -- ${OUTPUT_FILE} ${EXPORT_SCRIPT}

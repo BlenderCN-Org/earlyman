@@ -12,6 +12,14 @@ include_directories(${OPENGL_INCLUDE_DIR})
 
 find_package(GLEW 2.0 REQUIRED)
 
+set(RAPIDJSON_USE_SSE2 ON)
+set(RAPIDJSON_INCLUDEDIR "/Users/jharding/rapidjson/include")
+
+find_package(rapidjson REQUIRED)
+
+include_directories("${RAPIDJSON_INCLUDE_DIRS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")
+
 set(SOURCE_FILES src/main.cpp)
 
 add_executable(earlyman ${SOURCE_FILES})

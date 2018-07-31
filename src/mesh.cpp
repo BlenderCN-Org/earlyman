@@ -33,7 +33,7 @@ struct Mesh
       GLfloat uv_buffer_data[uvs . Size ()];
       for (rapidjson::SizeType i = 0; i < uvs . Size (); i++)
       {
-        uv_buffer_data[i] = uvs[i] . GetFloat (); 
+          uv_buffer_data[i] = uvs[i] . GetFloat ();
       }
 
       _size = verts . Size ();

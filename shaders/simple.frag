@@ -9,5 +9,6 @@ in vec2 _uv;
 out vec3 color;
 
 void main(void) {
-  color = texture(u_sampler, _uv).xyz;
+  // opengl loads images with origin bottom left, so image is vertically mirrored, we correct that here
+  color = texture(u_sampler, vec2(_uv.x, 1. - _uv.y)).xyz;
 }

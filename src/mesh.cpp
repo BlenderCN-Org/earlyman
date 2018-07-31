@@ -17,7 +17,6 @@ struct Mesh
       model = glm::scale (model, glm::vec3 (4.0f, 4.0f, 0.0f));
       model = glm::rotate (model, 0.2f, glm::vec3 (1.0f, 1.0f, 0.0f));
 
-      std::cout << glGenBuffers << std::endl;
       glGenBuffers(2, vbo);
       glGenVertexArrays(1, vao);
       glBindVertexArray(vao[0]);

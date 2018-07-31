@@ -28,14 +28,15 @@ int on_fail (std::string message)
 int main(int argc, char* args[])
 {
   Renderer renderer;
-  if (renderer . Init () > 0) on_fail ("init failed");
+  if (renderer . Init () > 0) return on_fail ("init failed");
   
   // load our model from file
   rapidjson::Document d;
   std::ifstream t("models/cube_m.json");
   std::stringstream buffer;
   buffer << t.rdbuf();
-  if (d . Parse (buffer . str () . c_str ()) . HasParseError ()) on_fail ("parsing json failed");
+  if (d . Parse (buffer . str () . c_str ()) . HasParseError ())
+    return on_fail ("parsing json failed");
 
   Mesh my_cube (0.0f, d["verts"], d["uvs"]);
 

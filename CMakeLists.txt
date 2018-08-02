@@ -10,6 +10,7 @@ include_directories(${SDL2_INCLUDE_DIR})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
+find_package(glfw3 3.2 REQUIRED)
 find_package(GLEW 2.0 REQUIRED)
 
 set(RAPIDJSON_USE_SSE2 ON)
@@ -23,4 +24,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")
 set(SOURCE_FILES src/main.cpp)
 
 add_executable(earlyman ${SOURCE_FILES})
-target_link_libraries(earlyman ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARY})
+target_link_libraries(earlyman ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARY} glfw)

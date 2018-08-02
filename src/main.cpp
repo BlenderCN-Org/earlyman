@@ -1,6 +1,13 @@
 
-#include <GL/glew.h>
+//#ifdef __APPLE__
+//    #include <OpenGL/gl3.h>         /// remove the "3" for OpenGL versions < 3
+//    #include <OpenGL/gl3ext.h>      /// ditto
+//#else 
+    #include <GL/glew.h>
+//#endif
+
 #include <SDL2/SDL.h>
+
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -28,7 +35,7 @@ int on_fail (std::string message)
 int main(int argc, char* args[])
 {
   Renderer renderer;
-  if (renderer . Init () > 0) return on_fail ("init failed");
+  if (renderer . Init ("assets/multi.bmp") > 0) return on_fail ("init failed");
   
   // load our model from file
   rapidjson::Document d;

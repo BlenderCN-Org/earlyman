@@ -15,7 +15,7 @@ struct Mesh
       // usually scale, rotate, then translate
       model = glm::translate (model, glm::vec3 (x_pos, 0.0f, -20.0f));
       model = glm::scale (model, glm::vec3 (4.0f, 4.0f, 0.0f));
-      model = glm::rotate (model, 0.2f, glm::vec3 (1.0f, 1.0f, 0.0f));
+      model = glm::rotate (model, 0.4f, glm::vec3 (1.0f, 1.0f, 0.0f));
 
       glGenBuffers(2, vbo);
       glGenVertexArrays(1, vao);
@@ -53,7 +53,7 @@ struct Mesh
     void draw (GLuint programID)
     {
 
-      model = glm::rotate (model, 0.01f, glm::vec3 (0.0f, 1.0f, 0.0f));
+      model = glm::rotate (model, -0.002f, glm::vec3 (0.0f, 1.0f, 0.0f));
       glUniformMatrix4fv (glGetUniformLocation (programID, "u_model"),
                 1, GL_FALSE, glm::value_ptr (model));
 

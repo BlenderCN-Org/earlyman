@@ -24,7 +24,8 @@ struct Renderer {
 
     float aspect_ratio = static_cast<float> (SCREEN_WIDTH) / static_cast<float> (SCREEN_HEIGHT);
     // near _can't_ be 0.0, else depth doesn't work
-    _projection = glm::perspective (glm::radians (100.0f), aspect_ratio, 0.1f, 100.0f);
+    _projection = glm::perspective (glm::radians (50.0f), aspect_ratio, 0.1f, 100.0f);
+    _view = glm::lookAt(glm::vec3(3,3,3), glm::vec3(0,0,0), glm::vec3(0,1,0));
 
     glGenTextures (1, &_textureID);
     glBindTexture (GL_TEXTURE_2D, _textureID);
@@ -51,7 +52,7 @@ struct Renderer {
   {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // apply camera rotation to view matrix
-    _view *= glm::toMat4 (_camera);
+    // _view *= glm::toMat4 (_camera);
 
     glUseProgram (_programID);
 

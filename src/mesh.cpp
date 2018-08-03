@@ -13,10 +13,11 @@ struct Mesh
     {
       model = glm::mat4 ();
       // usually scale, rotate, then translate
+      /*
       model = glm::translate (model, glm::vec3 (x_pos, 0.0f, -20.0f));
       model = glm::scale (model, glm::vec3 (4.0f, 4.0f, 0.0f));
       model = glm::rotate (model, 0.4f, glm::vec3 (1.0f, 1.0f, 0.0f));
-
+      */
       glGenBuffers(2, vbo);
       glGenVertexArrays(1, vao);
       glBindVertexArray(vao[0]);

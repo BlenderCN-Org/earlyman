@@ -34,7 +34,7 @@
 
 #include "mesh.cpp"
 #include "shader.cpp"
-#include "other_renderer.cpp"
+#include "renderer.cpp"
 #include "glfw_window.cpp"
 
 int on_fail (std::string message)

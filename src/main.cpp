@@ -15,7 +15,6 @@
 
 //#include <GL/glew.h>
 
-
 //#include <SDL2/SDL.h>
 
 #include <stdio.h>
@@ -23,6 +22,7 @@
 #include <string>
 
 // Include GLM
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
@@ -65,7 +65,7 @@ int main(int argc, char* args[])
   if (d . Parse (buffer . str () . c_str ()) . HasParseError ())
     return on_fail ("parsing json failed");
 
-  Mesh my_cube (0.0f, d["verts"], d["uvs"]);
+  Mesh my_cube (0.0f, d["verts"], d["uvs"], renderer . getProgramID ());
 
   bool quit = false;
   while (!quit)

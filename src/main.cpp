@@ -1,11 +1,4 @@
 
-//#ifdef __APPLE__
-//    #include <OpenGL/gl3.h>         /// remove the "3" for OpenGL versions < 3
-//    #include <OpenGL/gl3ext.h>      /// ditto
-//#else 
-// #include <GL/glew.h>
-//#endif
-
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -13,9 +6,7 @@
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
-//#include <GL/glew.h>
-
-//#include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 
 #include <stdio.h>
 #include <iostream>
@@ -32,6 +23,7 @@
 
 #include <rapidjson/document.h>
 
+#include "bmpreader.cpp"
 #include "mesh.cpp"
 #include "shader.cpp"
 #include "renderer.cpp"
@@ -45,14 +37,16 @@ int on_fail (std::string message)
 
 int main(int argc, char* args[])
 {
-  GLsizei width, height;
-  auto * bmp_pixels = new int8[32 * 32 * 3]; // hard coding 32x32 image with 3 color channels, each 8 bit
-
   Window window;
-  if (window . Init ("assets/multi.bmp", width, height, bmp_pixels) > 0)
+  if (window . Init () > 0)
     return on_fail ("window init failed");
 
+  GLsizei width, height;
+  // hard coding 32x32 image with 3 color channels, each 8 bit
+  auto * bmp_pixels = new unsigned char[32 * 32 * 3];
+  ReadBMP ("assets/multi.bmp", width, height, bmp_pixels);
   printf ("width, height, pointer: %d, %d, %p\n", width, height, bmp_pixels);
+
   Renderer renderer;
   if (renderer . OnGLContextCreated (width, height, bmp_pixels) > 0)
     return on_fail ("renderer init failed");

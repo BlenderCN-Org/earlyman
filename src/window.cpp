@@ -24,7 +24,7 @@ struct Window {
   SDL_GLContext _context;
   SDL_Event e;
 
-  int Init (std::string image_path, GLsizei& width, GLsizei& height, int8 * bmp_pixels)
+  int Init ()
   {
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
     {
@@ -60,25 +60,13 @@ struct Window {
 
     SDL_GL_SetSwapInterval (1);
 
+    /*
     GLenum status = glewInit ();
     if (status != GLEW_OK) {
         std::cerr << "GLEW failed to initialize!" << std::endl;
     }
-    
-    SDL_Surface* image_surface = SDL_LoadBMP (image_path . c_str ());
+    */ 
 
-    int redbits; 
-    SDL_GL_GetAttribute (SDL_GL_RED_SIZE, &redbits);
-    std::cout << "red bits: " << redbits << std::endl;
-    int depthbits; 
-    SDL_GL_GetAttribute (SDL_GL_DEPTH_SIZE, &depthbits);
-    std::cout << "depth bits: " << depthbits << std::endl;
- 
-    // should be 24.. 
-    printf ("bits per pixel: %d\n", image_surface -> format -> BitsPerPixel);
-    width = image_surface -> w;
-    height = image_surface -> h;
-    memcpy (bmp_pixels, image_surface -> pixels, 32 * 32 * 3); 
     return 0;
   }
 

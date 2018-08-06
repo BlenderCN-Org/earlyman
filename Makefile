@@ -23,8 +23,11 @@ COMMONFLAGS = -std=c++11 -MMD -MP -I"libs/rapidjson/include" -I"/usr/local/Cella
 LOCALFLAGS = -g -O2 $(COMMONFLAGS)
 
 EMXX = emcc
-EMXXFLAGS = $(COMMONFLAGS) -Oz -s -s USE_WEBGL2=1 -s FULL_ES3=1 -s USE_SDL=2 --js-library library_foo.js
+EMXXFLAGS = $(COMMONFLAGS) -Oz -s USE_WEBGL2=1 -s FULL_ES3=1 -s USE_SDL=2 --js-library library_foo.js
 EMXXLINK = -s TOTAL_MEMORY=50331648
+
+# default action (ie, you just type `make`)
+all: $(BINDIR)/main
 
 $(WWWDIR): $(WWWDIR)/index.html $(WWWDIR)/main.js
 

@@ -34,11 +34,11 @@
 
 #include <rapidjson/document.h>
 
-#include "bmpreader.cpp"
-#include "mesh.cpp"
-#include "shader.cpp"
-#include "renderer.cpp"
-#include "window.cpp"
+#include "bmpreader.h"
+#include "mesh.h"
+#include "shader.h"
+#include "renderer.h"
+#include "window.h"
 
 int on_fail (std::string message)
 {
@@ -49,8 +49,22 @@ int on_fail (std::string message)
 std::function<void()> loop;
 void main_loop() { loop (); }
 
+#ifdef EMSCRIPTEN
+extern "C" void EMSCRIPTEN_KEEPALIVE toggle_background_color()
+{ std::cout << "hey you pressed a button" << std::endl;
+}
+
+extern "C" {
+  void my_js(void);
+}
+#endif
+
 int main(int argc, char* args[])
 {
+#ifdef EMSCRIPTEN
+  my_js();
+#endif
+  SDL_Event e;
   Window window;
   if (window . Init () > 0)
     return on_fail ("window init failed");

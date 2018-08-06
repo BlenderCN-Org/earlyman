@@ -9,7 +9,7 @@ BUILDDIR = build
 _MKDIRS := $(shell mkdir -p $(BINDIR) $(WWWDIR) $(BUILDDIR))
 
 MODULES = main
-ASSETS = models/cube_m.json assets/multi.bmp shaders/simple.es300.vert shaders/simple.es300.frag
+ASSETS = assets/models/cube_m.json assets/images/multi.bmp assets/shaders/simple.es300.vert assets/shaders/simple.es300.frag
 
 # looks like installing SDL gets you this cool little utility for finding lib install locations
 LOCALLIBS = $(shell sdl2-config --libs)

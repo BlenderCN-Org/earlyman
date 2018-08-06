@@ -21,9 +21,11 @@ struct Renderer {
 
     // Create and compile our GLSL program from the shaders
 #ifndef EMSCRIPTEN
-    _programID = LoadShaders ("shaders/simple.core330.vert", "shaders/simple.core330.frag");
+    _programID = LoadShaders (
+        "assets/shaders/simple.core330.vert", "assets/shaders/simple.core330.frag");
 #else
-    _programID = LoadShaders ("shaders/simple.es300.vert", "shaders/simple.es300.frag");
+    _programID = LoadShaders (
+        "assets/shaders/simple.es300.vert", "assets/shaders/simple.es300.frag");
 #endif
 
     float aspect_ratio = static_cast<float> (SCREEN_WIDTH) / static_cast<float> (SCREEN_HEIGHT);

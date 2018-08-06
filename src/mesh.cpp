@@ -19,8 +19,10 @@ struct Mesh
     model = glm::rotate (model, 0.4f, glm::vec3 (1.0f, 1.0f, 0.0f));
     */
     glGenBuffers(2, vbo);
+#ifndef EMSCRIPTEN
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
+#endif
 
     assert(verts . IsArray ());
     
@@ -48,7 +50,9 @@ struct Mesh
     glVertexAttribPointer (glGetAttribLocation (programID, "uv"), 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray (glGetAttribLocation (programID, "uv"));
 
+#ifndef EMSCRIPTEN
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
   }
 
   void draw (GLuint programID)
@@ -57,7 +61,9 @@ struct Mesh
     glUniformMatrix4fv (glGetUniformLocation (programID, "u_model"), 1,
         GL_FALSE, glm::value_ptr (model));
 
+#ifndef EMSCRIPTEN
     glBindVertexArray (vao[0]);
+#endif
     glDrawArrays (GL_TRIANGLES, 0, _size);
   }
 

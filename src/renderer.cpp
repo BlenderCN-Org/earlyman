@@ -20,7 +20,11 @@ struct Renderer {
     printf("OpenGL version supported %s\n", version);
 
     // Create and compile our GLSL program from the shaders
-    _programID = LoadShaders ("shaders/simple.vert", "shaders/simple.frag");
+#ifndef EMSCRIPTEN
+    _programID = LoadShaders ("shaders/simple.core330.vert", "shaders/simple.core330.frag");
+#else
+    _programID = LoadShaders ("shaders/simple.es300.vert", "shaders/simple.es300.frag");
+#endif
 
     float aspect_ratio = static_cast<float> (SCREEN_WIDTH) / static_cast<float> (SCREEN_HEIGHT);
     // near _can't_ be 0.0, else depth doesn't work
@@ -33,7 +37,7 @@ struct Renderer {
     // NOTE: this crazy GL_BGR thing for the format param, I guess windows bitmaps flip blue and red?
     // if I just use GL_RGB for format, red and blue channels are reversed
     std::cout << "pixels: " << pixels << std::endl; 
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
     printf ("width: %d, height: %d\n", width, height);
 

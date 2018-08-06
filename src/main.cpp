@@ -3,11 +3,22 @@
 #define SCREEN_HEIGHT 480
 
 // Include GLFW
-#define GLFW_INCLUDE_GLCOREARB
-#include <GLFW/glfw3.h>
+//#define GLFW_INCLUDE_GLCOREARB
+//#include <GLFW/glfw3.h>
+
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#include "emscripten.h"
+#endif
+
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
+#endif
 
 #include <SDL2/SDL.h>
 
+#include <functional>
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -27,13 +38,16 @@
 #include "mesh.cpp"
 #include "shader.cpp"
 #include "renderer.cpp"
-#include "glfw_window.cpp"
+#include "window.cpp"
 
 int on_fail (std::string message)
 {
   std::cout << "ON_FAIL: " << message << std::endl;
   return 1;
 }
+
+std::function<void()> loop;
+void main_loop() { loop (); }
 
 int main(int argc, char* args[])
 {
@@ -62,12 +76,25 @@ int main(int argc, char* args[])
   Mesh my_cube (0.0f, d["verts"], d["uvs"], renderer . getProgramID ());
 
   bool quit = false;
-  while (!quit)
+  loop = [&]
   {
+#ifdef EMSCRIPTEN
+	  if (quit) emscripten_cancel_main_loop();
+#endif
     renderer . Draw (my_cube);
     quit = window . Refresh ();
+  };
+  
+#ifdef EMSCRIPTEN
+  emscripten_set_main_loop(main_loop, 0, true);
+#else
+  while (!quit)
+  {
+    loop ();
   }
+#endif
   window . CleanUp ();
   renderer . CleanUp ();
-  return 0;
+  
+  return EXIT_SUCCESS;
 }

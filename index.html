@@ -10,8 +10,9 @@
 
   <!-- Create the canvas that the C++ code will draw into -->
   <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-  <div>
-    <button onclick="onClick()">Change Color</button>
+  <div id="prompt">
+  </div>
+  <div id="buttons">
   </div>
 
   <!-- Allow the C++ to access the canvas element --> 
@@ -27,18 +28,32 @@
 
   <!-- Allow the javascript to call C++ functions -->
   <script type='text/javascript'>
-    function onClick () {
-      _toggle_background_color();
+    function onClick (e) {
+      Module.ccall('handle_input', null, ['string'], [e.target.getAttribute("data-key")]);
     }
-    function onButtonClicked (txt) {
-      document.getElementById("joe").innerHTML = txt;
+    function onReceiveData (data) {
+      // update the prompt value
+      document.getElementById("prompt").innerHTML = data['prompt'];
+
+      // update the button values
+      let parent = document.getElementById("buttons");
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+
+      for (let button of data['buttons']) {
+        let new_button = document.createElement ('button');
+        new_button.innerHTML = button['txt'];
+        new_button.dataset.key = button['key'];
+        new_button.addEventListener('click', onClick, false);
+        parent.appendChild (new_button);
+      }
     }
-    canv.addEventListener('click',    _toggle_background_color, false);
-    canv.addEventListener('touchend', _toggle_background_color, false);
+    function onEngineReady () {
+      Module.ccall('handle_input', null, ['string'], ["empty"]);
+    }
   </script>
 
-  <p>Click the canvas to change the background color.</p>
-  <div id="joe"></div>
 </body>
 
 </html>

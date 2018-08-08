@@ -50,9 +50,39 @@ std::function<void()> loop;
 void main_loop() { loop (); }
 
 #ifdef EMSCRIPTEN
-extern "C" void EMSCRIPTEN_KEEPALIVE toggle_background_color()
-{ std::cout << "hey you pressed a button" << std::endl;
-  emscripten_run_script("onButtonClicked('joe')");
+extern "C" void EMSCRIPTEN_KEEPALIVE handle_input(const char * selection)
+{
+  std::cout << "selection: " << selection << std::endl;
+
+  char input[100];
+  strcpy (input, "onReceiveData(");
+  strcat (input, "{");
+  if (strcmp ("open_door", selection) == 0)
+  {
+    strcat (input, "prompt: 'The door reveals a huge monster!',");
+    strcat (input, "buttons: [");
+    strcat (input, "{txt: 'Run away!', key: 'run_away'},");
+    strcat (input, "{txt: 'Fight!', key: 'fight'}");
+    strcat (input, "]");
+  }
+  else if (strcmp ("light", selection) == 0)
+  {
+    strcat (input, "prompt: 'The light reveals a dusty painting.',");
+    strcat (input, "buttons: [");
+    strcat (input, "{txt: 'Inspect it.', key: 'inspect'}");
+    strcat (input, "]");
+  }
+  else
+  {
+    strcat (input, "prompt: 'There is dark hallway leading to a closed door.',");
+    strcat (input, "buttons: [");
+    strcat (input, "{txt: 'Open the door', key: 'open_door'},");
+    strcat (input, "{txt: 'Turn on light', key: 'light'}");
+    strcat (input, "]");
+  }
+  strcat (input, "}");
+  strcat (input, ")");
+  emscripten_run_script (input);
 }
 
 extern "C" {
@@ -62,9 +92,6 @@ extern "C" {
 
 int main(int argc, char* args[])
 {
-#ifdef EMSCRIPTEN
-  my_js("content from cpp");
-#endif
   SDL_Event e;
   Window window;
   if (window . Init () > 0)
@@ -89,6 +116,11 @@ int main(int argc, char* args[])
     return on_fail ("parsing json failed");
 
   Mesh my_cube (0.0f, d["verts"], d["uvs"], renderer . getProgramID ());
+
+  // tell the ui layer the engine is ready
+#ifdef EMSCRIPTEN
+  emscripten_run_script ("onEngineReady()");
+#endif
 
   bool quit = false;
   loop = [&]

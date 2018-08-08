@@ -99,8 +99,8 @@ int main(int argc, char* args[])
 
   GLsizei width, height;
   // hard coding 32x32 image with 3 color channels, each 8 bit
-  auto * bmp_pixels = new unsigned char[32 * 32 * 3];
-  ReadBMP ("assets/images/multi.bmp", width, height, bmp_pixels);
+  auto * bmp_pixels = new unsigned char[64 * 64 * 3];
+  ReadBMP ("assets/images/hideout.bmp", width, height, bmp_pixels);
   printf ("width, height, pointer: %d, %d, %p\n", width, height, bmp_pixels);
 
   Renderer renderer;
@@ -109,7 +109,7 @@ int main(int argc, char* args[])
  
   // load our model from file
   rapidjson::Document d;
-  std::ifstream t("assets/models/cube_m.json");
+  std::ifstream t("assets/models/hideout_m.json");
   std::stringstream buffer;
   buffer << t.rdbuf();
   if (d . Parse (buffer . str () . c_str ()) . HasParseError ())

@@ -39,7 +39,7 @@ struct Renderer {
     // NOTE: this crazy GL_BGR thing for the format param, I guess windows bitmaps flip blue and red?
     // if I just use GL_RGB for format, red and blue channels are reversed
     std::cout << "pixels: " << pixels << std::endl; 
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, pixels);
 
     printf ("width: %d, height: %d\n", width, height);
 

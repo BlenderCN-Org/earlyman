@@ -61,7 +61,7 @@ static int ReadBMP (std::string image_path, GLsizei& width, GLsizei& height, uns
 
   width = bmp_width;
   height = bmp_height;
-  memcpy (bmp_pixels, data, 32 * 32 * 3);
+  memcpy (bmp_pixels, data, 64 * 64 * 3);
   
   return 0;
 }

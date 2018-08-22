@@ -2,3 +2,5 @@
 build
 bin
 www
+glew32.dll
+SDL2.dll

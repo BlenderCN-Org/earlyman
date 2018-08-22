@@ -64,12 +64,13 @@ struct Window {
 
     SDL_GL_SetSwapInterval (1);
 
-    /*
+#ifdef _WIN64
+    glewExperimental = true;
     GLenum status = glewInit ();
     if (status != GLEW_OK) {
         std::cerr << "GLEW failed to initialize!" << std::endl;
     }
-    */ 
+#endif
 
     return 0;
   }

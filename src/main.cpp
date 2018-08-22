@@ -16,6 +16,11 @@
 #include <OpenGL/gl3ext.h>
 #endif
 
+#ifdef _WIN64
+#include <GL/glew.h>
+#include <GL/gl.h>
+#endif
+
 #include <SDL2/SDL.h>
 
 #include <functional>
@@ -92,6 +97,8 @@ extern "C" {
 
 int main(int argc, char* args[])
 {
+  std::cout << "starting earlyman..." << std::endl; 
+  
   SDL_Event e;
   Window window;
   if (window . Init () > 0)

@@ -7,7 +7,7 @@ struct Mesh
   glm::mat4 model;
   GLuint vbo[2];
   GLuint vao[1];
-  uint _size;
+  int _size;
 
   Mesh(float x_pos, const rapidjson::Value& verts, const rapidjson::Value& uvs, GLuint programID)
   {

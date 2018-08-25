@@ -6,7 +6,8 @@ BUILDDIR = build
 
 MODULES = main
 
-_MKDIRS := $(shell mkdir $(BINDIR) $(BUILDDIR))
+_MKDIRS := $(shell if not exist $(BINDIR) mkdir $(BINDIR))
+_MKDIRS := $(shell if not exist $(BUILDDIR) mkdir $(BUILDDIR))
 
 CXX = x86_64-w64-mingw32-g++.exe
 LOCAL_LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lglew32
@@ -17,12 +18,12 @@ INCLUDE_FLAGS = -I"C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\
 proj: compile link
 
 build/main.o: src/main.cpp
-	$(CXX) -o $@ -c $<
+	$(CXX) $(INCLUDE_FLAGS) -o $@ -c $<
 
 compile: build/main.o
 
 link:
-	$(CXX) -o bin/main.exe build/main.o $(LOCAL_LIBS) $(INCLUDE_FLAGS)
+	$(CXX) -o bin/main.exe build/main.o $(LOCAL_LIBS)
 
 clean:
-	rm -rf $(BUILDDIR)/* $(BINDIR)/*
+	del /S /Q $(BUILDDIR)\* $(BINDIR)\*

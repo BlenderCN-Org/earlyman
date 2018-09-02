@@ -21,6 +21,7 @@
 #include <GL/gl.h>
 #endif
 
+#include <sqlite3.h>
 #include <SDL2/SDL.h>
 
 #include <functional>
@@ -39,6 +40,7 @@
 
 #include <rapidjson/document.h>
 
+#include "sim.h"
 #include "bmpreader.h"
 #include "mesh.h"
 #include "shader.h"
@@ -54,51 +56,23 @@ int on_fail (std::string message)
 std::function<void()> loop;
 void main_loop() { loop (); }
 
+Sim sim;
+
 #ifdef EMSCRIPTEN
-extern "C" void EMSCRIPTEN_KEEPALIVE handle_input(const char * selection)
+extern "C" void EMSCRIPTEN_KEEPALIVE handle_input(const char * input)
 {
-  std::cout << "selection: " << selection << std::endl;
-
-  char input[100];
-  strcpy (input, "onReceiveData(");
-  strcat (input, "{");
-  if (strcmp ("open_door", selection) == 0)
-  {
-    strcat (input, "prompt: 'The door reveals a huge monster!',");
-    strcat (input, "buttons: [");
-    strcat (input, "{txt: 'Run away!', key: 'run_away'},");
-    strcat (input, "{txt: 'Fight!', key: 'fight'}");
-    strcat (input, "]");
-  }
-  else if (strcmp ("light", selection) == 0)
-  {
-    strcat (input, "prompt: 'The light reveals a dusty painting.',");
-    strcat (input, "buttons: [");
-    strcat (input, "{txt: 'Inspect it.', key: 'inspect'}");
-    strcat (input, "]");
-  }
-  else
-  {
-    strcat (input, "prompt: 'There is dark hallway leading to a closed door.',");
-    strcat (input, "buttons: [");
-    strcat (input, "{txt: 'Open the door', key: 'open_door'},");
-    strcat (input, "{txt: 'Turn on light', key: 'light'}");
-    strcat (input, "]");
-  }
-  strcat (input, "}");
-  strcat (input, ")");
-  emscripten_run_script (input);
-}
-
-extern "C" {
-  void my_js(const char *);
+  char result[1000]; //TODO - how will I know if I exceed this?
+  strcpy (result, "onReceiveData("); 
+  sim . message (input, result);
+  strcat (result, ")");
+  emscripten_run_script (result);
 }
 #endif
 
 int main(int argc, char* args[])
 {
   std::cout << "starting earlyman..." << std::endl; 
-  
+
   SDL_Event e;
   Window window;
   if (window . Init () > 0)
@@ -149,6 +123,6 @@ int main(int argc, char* args[])
 #endif
   window . CleanUp ();
   renderer . CleanUp ();
-  
+  sim . CleanUp (); 
   return EXIT_SUCCESS;
 }

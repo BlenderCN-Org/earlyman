@@ -39,6 +39,8 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 #include "sim.h"
 #include "bmpreader.h"

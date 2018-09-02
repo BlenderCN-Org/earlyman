@@ -1,13 +1,13 @@
 
-static int callback(void *NotUsed, int argc, char **argv, char **azColName)
+static int callback (void *NotUsed, int argc, char **argv, char **azColName)
 {
-	int i;
-	for(i=0; i<argc; i++)
-	{
+  int i;
+  for(i=0; i<argc; i++)
+  {
     std::cout << azColName[i] << " = " << (argv[i] ? argv[i] : "NULL") << "\n";
-	}
+  }
   std::cout << "\n";
-	return 0;
+  return 0;
 }
 
 struct Sim
@@ -15,6 +15,8 @@ struct Sim
 
   int _turn_count;
   sqlite3 * _db; 
+    
+  sqlite3_stmt * _all_crew;
 
   Sim ()
   {
@@ -50,50 +52,110 @@ struct Sim
     }
     */
 
+    /*
     char *zErrMsg = 0;
-    const char * query = "select * from crew";
     rc = sqlite3_exec (_db, query, callback, 0, &zErrMsg);
     if(rc != SQLITE_OK)
     {
       std::cout << "SQL error: " << sqlite3_errmsg(_db) << std::endl;
       sqlite3_free (zErrMsg);
     }
+    */
 
+    const char * query = "select * from crew";
+    rc = sqlite3_prepare_v2(_db, query, -1, &_all_crew, 0);
+    /*
+    // if you need to inservert vars into the query 
+    if (rc == SQLITE_OK)
+    { sqlite3_bind_int (res, 1, 3);
+    }
+    else
+    { fprintf (stderr, "Failed to execute statement: %s\n", sqlite3_errmsg (_db));
+    }
+    */ 
   }
 
   void message(const char * input, char * output)
   {
     std::cout << "input: " << input << std::endl;
+    rapidjson::Document doc;
+    doc . SetObject ();
+    rapidjson::Document::AllocatorType &alloc = doc . GetAllocator ();
 
-    strcat (output, "{");
-    if (strcmp ("open_door", input) == 0)
+    if (strcmp ("show_crew", input) == 0)
     {
-      strcat (output, "prompt: 'The door reveals a huge monster!',");
-      strcat (output, "buttons: [");
-      strcat (output, "{txt: 'Run away!', key: 'run_away'},");
-      strcat (output, "{txt: 'Fight!', key: 'fight'}");
-      strcat (output, "]");
+      char data[100];
+      strcpy (data, "Crew: ");
+      int step;
+      do
+      { 
+        step = sqlite3_step (_all_crew);
+        if (step == SQLITE_ROW)
+        { printf("%s: ", sqlite3_column_text (_all_crew, 0));
+          printf("%s\n", sqlite3_column_text (_all_crew, 1));
+          strcat (data, const_cast<char *>(reinterpret_cast<const char*> (sqlite3_column_text (_all_crew, 0)))); 
+        }
+      }
+      while (step != SQLITE_DONE);
+      sqlite3_reset (_all_crew);
+
+      rapidjson::Document btn0;
+      btn0 . SetObject ();
+      btn0 . AddMember ("txt", "Back", alloc) . AddMember ("key", "back", alloc);
+      
+      rapidjson::Value buttons (rapidjson::kArrayType);
+      buttons . PushBack (btn0, alloc); 
+     
+      std::string s(data); 
+      doc . AddMember ("prompt", rapidjson::StringRef (data), alloc);
+      doc . AddMember ("buttons", buttons, alloc);
     }
-    else if (strcmp ("light", input) == 0)
+    else if (strcmp ("add_crew", input) == 0)
     {
-      strcat (output, "prompt: 'The light reveals a dusty painting.',");
-      strcat (output, "buttons: [");
-      strcat (output, "{txt: 'Inspect it.', key: 'inspect'}");
-      strcat (output, "]");
+      sqlite3_stmt * insert_crew;
+      const char * s = "insert into crew (Name, current_job, id) values ('Glenn', 'Pilot', 4)";
+      sqlite3_prepare_v2(_db, s, -1, &insert_crew, 0);
+      sqlite3_step (insert_crew);
+      sqlite3_finalize (insert_crew);
+      
+      rapidjson::Document btn0;
+      btn0 . SetObject ();
+      btn0 . AddMember ("txt", "Back", alloc);
+      btn0 . AddMember ("key", "back", alloc);
+      
+      rapidjson::Value buttons (rapidjson::kArrayType);
+      buttons . PushBack (btn0, alloc); 
+      
+      doc . AddMember ("prompt", "Crew increased", alloc);
+      doc . AddMember ("buttons", buttons, alloc);
     }
     else
     {
-      strcat (output, "prompt: 'There is dark hallway leading to a closed door.',");
-      strcat (output, "buttons: [");
-      strcat (output, "{txt: 'Open the door', key: 'open_door'},");
-      strcat (output, "{txt: 'Turn on light', key: 'light'}");
-      strcat (output, "]");
+      rapidjson::Document btn0;
+      btn0 . SetObject ();
+      btn0 . AddMember ("txt", "Show your crew", alloc) . AddMember ("key", "show_crew", alloc);
+      rapidjson::Document btn1;
+      btn1 . SetObject ();
+      btn1 . AddMember ("txt", "Add to crew", alloc) . AddMember ("key", "add_crew", alloc);
+      
+      rapidjson::Value buttons (rapidjson::kArrayType);
+      buttons . PushBack (btn0, alloc) . PushBack (btn1, alloc); 
+      
+      doc . AddMember ("prompt", "You're hanging at the hideout.", alloc);
+      doc . AddMember ("buttons", buttons, alloc);
     }
-    strcat (output, "}");
+
+    rapidjson::StringBuffer buf;
+    rapidjson::Writer <rapidjson::StringBuffer> writer(buf);
+    doc . Accept (writer);
+
+    std::cout << buf . GetString () << std::endl;
+    strcat (output, buf . GetString ());
   }
 
   void CleanUp ()
   {
+    sqlite3_finalize (_all_crew);
     sqlite3_close (_db); 
   }
 };

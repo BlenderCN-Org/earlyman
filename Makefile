@@ -15,6 +15,9 @@ ASSETS = assets/models/hideout_m.json \
 				 assets/shaders/simple.es300.frag \
 				 assets/data/gang.db
 
+HEADERS = \
+    src/sim.h \
+
 # looks like installing SDL gets you this cool little utility for finding lib install locations
 LOCALLIBS = $(shell sdl2-config --libs)
 ifeq ($(UNAME),Darwin)
@@ -47,7 +50,7 @@ $(WWWDIR)/main.js: $(MODULES:%=$(BUILDDIR)/%.em.o) $(ASSETS) Makefile
 $(BINDIR)/main: $(MODULES:%=$(BUILDDIR)/%.o) Makefile
 	$(CXX) $(LOCALFLAGS) $(filter %.o,$^) $(LOCALLIBS) -o $@
 
-$(BUILDDIR)/%.em.o: src/%.cpp Makefile
+$(BUILDDIR)/%.em.o: src/%.cpp $(HEADERS) Makefile
 	@mkdir -p $(dir $@)
 	@echo $(EMXX) $(EMXXFLAGS) -c $< -o $@
 	@$(EMXX) $(EMXXFLAGS) -c $< -o $@

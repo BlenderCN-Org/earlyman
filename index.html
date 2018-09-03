@@ -4,6 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+		table, th, td {
+			border: 1px solid black;
+		}
+		td {
+				display: table-cell;
+				vertical-align: inherit;
+		}
+  </style>
 </head>
 
 <body>
@@ -13,6 +22,8 @@
   <div id="prompt">
   </div>
   <div id="buttons">
+  </div>
+  <div id="tables">
   </div>
 
   <!-- Allow the C++ to access the canvas element --> 
@@ -42,11 +53,41 @@
       }
 
       for (let button of data['buttons']) {
-        let new_button = document.createElement ('button');
+        let new_button = document.createElement('button');
         new_button.innerHTML = button['txt'];
         new_button.dataset.key = button['key'];
         new_button.addEventListener('click', onClick, false);
         parent.appendChild (new_button);
+      }
+
+      // update the table values if any
+      let tables_parent = document.getElementById("tables");
+      while (tables_parent.firstChild) {
+        tables_parent.removeChild(tables_parent.firstChild);
+      }
+      if(data.hasOwnProperty('tables')) {
+        for (let data_table of data['tables']) {
+          let table = document.createElement('table');
+          let table_body = document.createElement('tbody');
+
+          for (let row_idx = 0; row_idx < data_table.length; row_idx++) {
+            let row = document.createElement('tr');
+            for (let data_cell of data_table[row_idx]) {
+              let cell;
+              if(row_idx == 0) {
+                cell = document.createElement('th');
+              } else {
+                cell = document.createElement('td');
+              }
+              let cell_text = document.createTextNode(data_cell);
+              cell.appendChild(cell_text);
+              row.appendChild(cell);
+            }
+            table_body.appendChild(row);
+          }
+          table.appendChild(table_body);
+          tables_parent.appendChild(table);
+        }
       }
     }
     function onEngineReady () {

@@ -75,6 +75,54 @@ struct Sim
     */ 
   }
 
+  void populate_menu_show_crew (rapidjson::Document &doc, rapidjson::Document::AllocatorType &alloc)
+  {
+    rapidjson::Value crew (rapidjson::kArrayType);
+
+    rapidjson::Value header (rapidjson::kArrayType);
+    header . PushBack ("Name", alloc); 
+    header . PushBack ("Intimidation", alloc); 
+    
+    crew . PushBack (header, alloc);
+    
+    int step;
+    do
+    { 
+      step = sqlite3_step (_all_crew);
+      if (step == SQLITE_ROW)
+      { printf("%s: ", sqlite3_column_text (_all_crew, 0));
+        printf("%s\n", sqlite3_column_text (_all_crew, 1));
+        rapidjson::Value row (rapidjson::kArrayType);
+        const unsigned char * raw_field = sqlite3_column_text (_all_crew, 1);
+        char * field = const_cast<char *> (reinterpret_cast<const char*> (raw_field));
+        size_t len = sqlite3_column_bytes (_all_crew, 1);
+        row . PushBack (rapidjson::Value{}.SetString(field, len, alloc), alloc); 
+        
+        int intimidation = sqlite3_column_int (_all_crew, 2);
+        row . PushBack (intimidation, alloc); 
+        
+        crew . PushBack (row, alloc);
+      }
+    }
+    while (step != SQLITE_DONE);
+    sqlite3_reset (_all_crew);
+
+    rapidjson::Value tables (rapidjson::kArrayType);
+    tables . PushBack (crew, alloc); 
+    
+    // buttons 
+    rapidjson::Document btn0;
+    btn0 . SetObject ();
+    btn0 . AddMember ("txt", "Back", alloc) . AddMember ("key", "back", alloc);
+    
+    rapidjson::Value buttons (rapidjson::kArrayType);
+    buttons . PushBack (btn0, alloc); 
+
+    doc . AddMember ("prompt", "Crew:", alloc);
+    doc . AddMember ("buttons", buttons, alloc);
+    doc . AddMember ("tables", tables, alloc);
+  }
+
   void message(const char * input, char * output)
   {
     std::cout << "input: " << input << std::endl;
@@ -83,37 +131,12 @@ struct Sim
     rapidjson::Document::AllocatorType &alloc = doc . GetAllocator ();
 
     if (strcmp ("show_crew", input) == 0)
-    {
-      char data[100];
-      strcpy (data, "Crew: ");
-      int step;
-      do
-      { 
-        step = sqlite3_step (_all_crew);
-        if (step == SQLITE_ROW)
-        { printf("%s: ", sqlite3_column_text (_all_crew, 0));
-          printf("%s\n", sqlite3_column_text (_all_crew, 1));
-          strcat (data, const_cast<char *>(reinterpret_cast<const char*> (sqlite3_column_text (_all_crew, 0)))); 
-        }
-      }
-      while (step != SQLITE_DONE);
-      sqlite3_reset (_all_crew);
-
-      rapidjson::Document btn0;
-      btn0 . SetObject ();
-      btn0 . AddMember ("txt", "Back", alloc) . AddMember ("key", "back", alloc);
-      
-      rapidjson::Value buttons (rapidjson::kArrayType);
-      buttons . PushBack (btn0, alloc); 
-     
-      std::string s(data); 
-      doc . AddMember ("prompt", rapidjson::StringRef (data), alloc);
-      doc . AddMember ("buttons", buttons, alloc);
+    { populate_menu_show_crew (doc, alloc);
     }
     else if (strcmp ("add_crew", input) == 0)
     {
       sqlite3_stmt * insert_crew;
-      const char * s = "insert into crew (Name, current_job, id) values ('Glenn', 'Pilot', 4)";
+      const char * s = "insert into crew (id, name, intimidation, planning, computers) values (4, 'Matt', 0, 0, 0)";
       sqlite3_prepare_v2(_db, s, -1, &insert_crew, 0);
       sqlite3_step (insert_crew);
       sqlite3_finalize (insert_crew);
@@ -131,17 +154,23 @@ struct Sim
     }
     else
     {
+      if (strcmp ("next", input) == 0)
+      { HandleNextTurn ();
+      }
       rapidjson::Document btn0;
       btn0 . SetObject ();
-      btn0 . AddMember ("txt", "Show your crew", alloc) . AddMember ("key", "show_crew", alloc);
+      btn0 . AddMember ("txt", "Next Turn", alloc) . AddMember ("key", "next", alloc);
       rapidjson::Document btn1;
       btn1 . SetObject ();
       btn1 . AddMember ("txt", "Add to crew", alloc) . AddMember ("key", "add_crew", alloc);
+      rapidjson::Document btn2;
+      btn2 . SetObject ();
+      btn2 . AddMember ("txt", "Show your crew", alloc) . AddMember ("key", "show_crew", alloc);
       
       rapidjson::Value buttons (rapidjson::kArrayType);
-      buttons . PushBack (btn0, alloc) . PushBack (btn1, alloc); 
+      buttons . PushBack (btn0, alloc) . PushBack (btn1, alloc) . PushBack (btn2, alloc); 
       
-      doc . AddMember ("prompt", "You're hanging at the hideout.", alloc);
+      doc . AddMember ("prompt", "You're hanging at the hideout. What do you want to do?", alloc);
       doc . AddMember ("buttons", buttons, alloc);
     }
 
@@ -151,6 +180,11 @@ struct Sim
 
     std::cout << buf . GetString () << std::endl;
     strcat (output, buf . GetString ());
+  }
+
+  void HandleNextTurn ()
+  {
+    _turn_count++;
   }
 
   void CleanUp ()

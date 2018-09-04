@@ -4,26 +4,30 @@
 BINDIR = bin
 BUILDDIR = build
 
-MODULES = main
+MODULES = main sqlite
 
 _MKDIRS := $(shell if not exist $(BINDIR) mkdir $(BINDIR))
 _MKDIRS := $(shell if not exist $(BUILDDIR) mkdir $(BUILDDIR))
 
 CXX = x86_64-w64-mingw32-g++.exe
+CC = x86_64-w64-mingw32-gcc.exe
 LOCAL_LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lglew32
 
 INCLUDE_FLAGS = -I"C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\include" \
-								-I".\libs\glm-0.9.9.0\glm" -I".\libs\rapidjson\include"
+								-I".\libs\glm-0.9.9.0\glm" -I".\libs\rapidjson\include" -I".\libs\sqlite3"
 
 proj: compile link
 
 build/main.o: src/main.cpp
 	$(CXX) $(INCLUDE_FLAGS) -o $@ -c $<
 
-compile: build/main.o
+build/sqlite.o: src/sqlite3.c
+	$(CC) $(INCLUDE_FLAGS) -o $@ -c $<
+
+compile: $(MODULES:%=$(BUILDDIR)/%.o) WMakefile
 
 link:
-	$(CXX) -o bin/main.exe build/main.o $(LOCAL_LIBS)
+	$(CXX) -o $(BINDIR)/main.exe $(MODULES:%=$(BUILDDIR)/%.o) $(LOCAL_LIBS)
 
 clean:
 	del /S /Q $(BUILDDIR)\* $(BINDIR)\*

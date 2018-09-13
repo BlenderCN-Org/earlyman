@@ -75,6 +75,12 @@ struct Sim
     */ 
   }
 
+  void populate_menu_show_missions (rapidjson::Document &doc, rapidjson::Document::AllocatorType &alloc)
+  {
+    // select all enterpirses that are "available"
+    // add these as mission rows as "shakedown missions"
+  }
+
   void populate_menu_show_crew (rapidjson::Document &doc, rapidjson::Document::AllocatorType &alloc)
   {
     rapidjson::Value crew (rapidjson::kArrayType);
@@ -90,9 +96,7 @@ struct Sim
     { 
       step = sqlite3_step (_all_crew);
       if (step == SQLITE_ROW)
-      { printf("%s: ", sqlite3_column_text (_all_crew, 0));
-        printf("%s\n", sqlite3_column_text (_all_crew, 1));
-        rapidjson::Value row (rapidjson::kArrayType);
+      { rapidjson::Value row (rapidjson::kArrayType);
         const unsigned char * raw_field = sqlite3_column_text (_all_crew, 1);
         char * field = const_cast<char *> (reinterpret_cast<const char*> (raw_field));
         size_t len = sqlite3_column_bytes (_all_crew, 1);
@@ -133,6 +137,9 @@ struct Sim
     if (strcmp ("show_crew", input) == 0)
     { populate_menu_show_crew (doc, alloc);
     }
+    else if (strcmp ("show_missions", input) == 0)
+    { populate_menu_show_missions (doc, alloc);
+    }
     else if (strcmp ("add_crew", input) == 0)
     {
       sqlite3_stmt * insert_crew;
@@ -166,11 +173,14 @@ struct Sim
       rapidjson::Document btn2;
       btn2 . SetObject ();
       btn2 . AddMember ("txt", "Show your crew", alloc) . AddMember ("key", "show_crew", alloc);
+      rapidjson::Document btn3;
+      btn3 . SetObject ();
+      btn3 . AddMember ("txt", "Show missions", alloc) . AddMember ("key", "show_crew", alloc);
       
       rapidjson::Value buttons (rapidjson::kArrayType);
-      buttons . PushBack (btn0, alloc) . PushBack (btn1, alloc) . PushBack (btn2, alloc); 
+      buttons . PushBack (btn0, alloc) . PushBack (btn1, alloc) . PushBack (btn2, alloc) . PushBack (btn3, alloc); 
       
-      doc . AddMember ("prompt", "You're hanging at the hideout. What do you want to do?", alloc);
+      doc . AddMember ("prompt", "Turn: " + std::to_string(_turn_count) + "\nYou're hanging at the hideout. What do you want to do?", alloc);
       doc . AddMember ("buttons", buttons, alloc);
     }
 
@@ -185,6 +195,36 @@ struct Sim
   void HandleNextTurn ()
   {
     _turn_count++;
+
+    // drop missions table and re-create? that means some available missions need to be stored somewhere else?
+
+    // recalculate missions
+    sqlite3_stmt * enterprises_for_missions;
+    const char * query = "select * from enterprises i where i.available = 1";
+    int rc = sqlite3_prepare_v2(_db, query, -1, &enterprises_for_missions, 0);
+
+    vector<int> enterprise_ids;
+    int step;
+    do
+    { 
+      step = sqlite3_step (enterprises_for_missions);
+      if (step == SQLITE_ROW)
+      {
+        enterprise_ids . push_back (sqlite3_column_text (enterprises_for_missions, 0));
+      }
+    }
+    while (step != SQLITE_DONE);
+    sqlite3_reset (enterprises_for_missions);
+
+    // add all available enterprises to the mission_enterprise table
+    sqlite3_stmt * insert_enterprise_mission;
+    const char * s = "insert into mission_enterprise (enterprise_id) values ()";
+    sqlite3_prepare_v2(_db, s, -1, &insert_enterprise_mission, 0);
+    sqlite3_step (insert_enterprise_mission);
+    sqlite3_finalize (insert_enterprise_mission);
+
+    // start to rebuild the mission table
+
   }
 
   void CleanUp ()

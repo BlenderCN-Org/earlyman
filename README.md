@@ -36,3 +36,8 @@ ro run: `cd www && python -m SimpleHTTPServer 8000` and then open a web browser 
 ```
 x86_64-w64-mingw32-g++.exe -o main.exe .\src\main.cpp -I"C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\include" -I".\libs\glm-0.9.9.0\glm" -I".\libs\rapidjson\include" -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lglew32
 ```
+
+### :snake: Anaconda :snake:
+
+This project shows my interest in maximizing platform flexibility. One of the primary goals of this early prototype of a game engine was to be able to run it everywhere. By using C++ and OpenGL I'll be able to publish to Mac (despite the push to Metal), Linux, Windows, Android (via the NDK), iOS, and even the Web (via emscripten).
+

@@ -2,6 +2,7 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
+#define GL_SILENCE_DEPRECATION
 // Include GLFW
 //#define GLFW_INCLUDE_GLCOREARB
 //#include <GLFW/glfw3.h>

@@ -57,7 +57,7 @@ struct Mesh
 
   void draw (GLuint programID)
   {
-    model = glm::rotate (model, 0.02f, glm::vec3 (0, 0, 1));
+    model = glm::rotate (model, 0.005f, glm::vec3 (0, 0, 1));
     glUniformMatrix4fv (glGetUniformLocation (programID, "u_model"), 1,
         GL_FALSE, glm::value_ptr (model));
 

@@ -1,5 +1,9 @@
 
-# setup
+# game engine, code name: earlyman
+
+![earlyman](earlyman.png "earlyman")
+
+## setup
 
 ```
 brew install glm                    # tested with version 0.9.9.0
@@ -11,19 +15,19 @@ if you'd like to run the web (emscripten) version, you'll need to setup emscript
 
 if you'd like to build on windows, you'll need to install mingw
 
-# build and run
+## build and run
 
-## Desktop Mac/Linux
+### Desktop Mac/Linux
 
 to build: `make`
 to run: `./bin/main`
 
-## Web Mac/Linux
+### Web Mac/Linux
 
 to build: `make www`
 ro run: `cd www && python -m SimpleHTTPServer 8000` and then open a web browser and load http://localhost:8000
 
-## Desktop Windows
+### Desktop Windows
 
 `mingw32-make.exe -f .\WMakefile`
 

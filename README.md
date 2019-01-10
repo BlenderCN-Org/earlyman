@@ -2,9 +2,10 @@
 # setup
 
 ```
-brew install emscripten # tested with version 1.38.11
-brew install glm # tested with version 0.9.9.0
-brew install sdl2 # tested with version 2.0.8
+brew install emscripten             # tested with version 1.38.11
+brew install glm                    # tested with version 0.9.9.0
+brew install sdl2                   # tested with version 2.0.8
+cd libs && https://github.com/Tencent/rapidjson
 ```
 
 # build and run

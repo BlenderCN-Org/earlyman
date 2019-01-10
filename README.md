@@ -1,16 +1,23 @@
 
 # setup
 
+```
 brew install emscripten # tested with version 1.38.11
 brew install glm # tested with version 0.9.9.0
 brew install sdl2 # tested with version 2.0.8
+```
 
-# build
+# build and run
 
-to build the desktop version: `make`
-to build the web version `make www` (and then serve dir www with `python -m SimpleHTTPServer 8000`)
+## Desktop Version
 
-NOTE: cmake files are legacy, not using these anymore
+to build: `make`
+to run: `./bin/main`
+
+## Web Version
+
+to build: `make www`
+ro run: `cd www && python -m SimpleHTTPServer 8000` and then open a web browser and load http://localhost:8000
 
 # windows build - in progress - requires mingw
 

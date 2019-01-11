@@ -1,5 +1,6 @@
 
-# earlyman game engine prototype
+# earlyman
+### game engine prototype
 
 ![earlyman](earlyman.png "earlyman")
 

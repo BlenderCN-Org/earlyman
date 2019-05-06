@@ -12,12 +12,13 @@
 #include "emscripten.h"
 #endif
 
-#ifdef __APPLE__
+#ifdef __linux__
+#include <GL/glew.h>
+#include <GL/gl.h>
+#elif __APPLE__
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
-#endif
-
-#ifdef _WIN64
+#elif _WIN64
 #include <GL/glew.h>
 #include <GL/gl.h>
 #endif

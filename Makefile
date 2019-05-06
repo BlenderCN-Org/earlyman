@@ -23,7 +23,7 @@ LOCALLIBS = $(shell sdl2-config --libs)
 ifeq ($(UNAME),Darwin)
 	LOCALLIBS += -Wl,-dead_strip -framework OpenGL
 else
-	LOCALLIBS += -lGL
+	LOCALLIBS += -lGL -ldl -lpthread -lGLEW
 endif
 
 COMMONFLAGS = -std=c++11 -MMD -MP -I"libs/sqlite3" -I"libs/rapidjson/include" -I"/usr/local/Cellar/glm/0.9.9.0/include"

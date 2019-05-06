@@ -6,6 +6,20 @@
 
 A tiny game engine prototype using C++, OpenGL, SDL2, and SQLite. Designed to be run anywhere and built anywhere for ease of casual development and future deployment flexibility. No special IDE, runtime, license, or OS required.
 
+## Linux VM Setup
+
+Not really supported right now, only running opengl 1.4:
+
+```
+earlyman (master) $  glxinfo | grep OpenGL
+libGL error: unable to load driver: swrast_dri.so
+libGL error: failed to load driver: swrast
+OpenGL vendor string: Intel
+OpenGL renderer string: Intel(R) UHD Graphics 630
+OpenGL version string: 1.4 (4.5.0 - Build 23.20.16.4973)
+OpenGL extensions:
+```
+
 ## Mac setup
 
 ```
